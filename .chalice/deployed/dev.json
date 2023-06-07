@@ -7,9 +7,29 @@
       "role_name": "RdsGetFront-dev"
     },
     {
-      "name": "get_rds",
+      "name": "get_order",
       "resource_type": "lambda_function",
-      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-get_rds"
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-get_order"
+    },
+    {
+      "name": "get_order_name",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-get_order_name"
+    },
+    {
+      "name": "new_order",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-new_order"
+    },
+    {
+      "name": "update_status",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-update_status"
+    },
+    {
+      "name": "delete_order",
+      "resource_type": "lambda_function",
+      "lambda_arn": "arn:aws:lambda:us-east-1:000000000000:function:RdsGetFront-dev-delete_order"
     },
     {
       "name": "api_handler",
@@ -19,8 +39,8 @@
     {
       "name": "rest_api",
       "resource_type": "rest_api",
-      "rest_api_id": "svm2h0r29c",
-      "rest_api_url": "https://svm2h0r29c.execute-api.us-east-1.amazonaws.com/api/"
+      "rest_api_id": "hij55mhmxc",
+      "rest_api_url": "https://hij55mhmxc.execute-api.us-east-1.amazonaws.com/api/"
     }
   ],
   "schema_version": "2.0",
