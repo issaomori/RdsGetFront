@@ -168,7 +168,7 @@ INSERT INTO orders (status, user_id, items) VALUES ('APROVADO', '3', ARRAY[1, 3]
 
 Para exibir todos os registros de uma tabela
 ```sql
-SELECT * FROM livros;
+SELECT * FROM orders;
 ```
 
 <br>

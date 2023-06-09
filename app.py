@@ -9,6 +9,26 @@ app = Chalice(app_name='RdsGetFront')
 
 # AWS Lambda
 
+# SELECT orders.id, orders.status, users.nome,
+#        array_agg(items.nome) as item_nomes
+# FROM orders
+# JOIN users ON orders.user_id = users.id
+# JOIN unnest(orders.items) AS item_id ON TRUE
+# JOIN items ON items.id = item_id
+# GROUP BY orders.id, orders.status, users.nome;
+
+@app.lambda_function()
+def get_all(event, context):
+    conn = psycopg2.connect(database="database",
+                            host="host.docker.internal",
+                            user="user",
+                            password="pass",
+                            port="4510")
+    cursor = conn.cursor()
+    cursor.execute("SELECT orders.id, orders.status, users.nome, array_agg(items.nome) as item_nomes \
+                    FROM orders JOIN users ON orders.user_id = users.id JOIN unnest(orders.items) AS item_id ON TRUE \
+                    JOIN items ON items.id = item_id GROUP BY orders.id, orders.status, users.nome;")  # comando que faz a consulta no banco
+    return {"list orders": cursor.fetchall()}
 
 @app.lambda_function()
 def get_order(event, context):
@@ -39,7 +59,7 @@ def get_order_name(event, context):
                    ARRAY(SELECT items.nome FROM items WHERE items.id=ANY(orders.items)) as item_nomes
                    FROM orders JOIN users ON orders.user_id=users.id
                    WHERE users.nome='{name_user}';""")  # comando que faz a consulta no banco
-    return {"list orders": cursor.fetchall()}
+    return {"list_orders": cursor.fetchall()}
 
 
 @app.lambda_function()
@@ -119,7 +139,7 @@ def update_an_order():
 # https://mmwdi1i8c3.execute-api.localhost.localstack.cloud:4566/api/order
 
 
-@app.route("/order/user/{nome}", methods=['GET'])
+@app.route("/order/user/{nome}", methods=['GET'], cors=True)
 def get_order_name_api(nome):
     client = boto3.client('lambda', endpoint_url=(
         "http://host.docker.internal:4566"))
@@ -138,7 +158,16 @@ def get_order_name_api(nome):
     return json.load(result['Payload'])
 
 
-@app.route("/order/{var}", methods=['GET'])
+@app.route("/order", methods=['GET'], cors=True)
+def get_all_api():
+    client = boto3.client('lambda', endpoint_url=(
+        "http://host.docker.internal:4566"))
+
+    result = client.invoke(FunctionName='RdsGetFront-dev-get_all')
+    return json.load(result['Payload'])
+
+
+@app.route("/order/{var}", methods=['GET'], cors=True)
 def get_order_api(var):
     client = boto3.client('lambda', endpoint_url=(
         "http://host.docker.internal:4566"))
@@ -169,7 +198,7 @@ def get_order_api(var):
                                Payload=json_payload)
         return json.load(result['Payload'])
 
-@app.route("/order", methods=['POST'])  # {"ID":"4","items":[1, 1]}
+@app.route("/order", methods=['POST'], cors=True)  # {"ID":"4","items":[1, 1]}
 def receive_an_order():
     client = boto3.client('lambda', endpoint_url=(
         "http://host.docker.internal:4566"))
