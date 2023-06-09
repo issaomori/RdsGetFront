@@ -88,11 +88,24 @@ function post_order() {
 
 	var order = {
 		"nome": nome,
-		"items": itens.split(",")
+		"items": itens.split(",").map(Number)
 	}
 
 	console.log(order);
 
 	// axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
-	//axios.get('https://4dgxju5lue.execute-api.localhost.localstack.cloud:4566/api/pensionistas').then(resp => {
+	axios.post('https://utctstmed9.execute-api.localhost.localstack.cloud:4566/api/order', order).then(resp => {
+		console.log("Cadastrado");
+		console.log(resp.data);
+
+		document.getElementById('order_name').value = "";
+		document.getElementById('order_items').value = "";
+
+		document.getElementById('post_message').value = "oi";
+	});
 }
+
+// "column "array5" does not exist
+// LINE 1: ...T id FROM user_info), (SELECT id FROM insert_user)), ARRAY5;
+//                                                                 ^
+// "
