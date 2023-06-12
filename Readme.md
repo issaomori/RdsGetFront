@@ -417,3 +417,28 @@ Para passar algum parâmetro para uma funçao lambda específica\
 
 Para logar nos serviços pagos da Localsatck\
 `export LOCALSTACK_API_KEY=sua_key`  Essa key você pega na sua página de usuário da localstak
+
+_______________________________________________________________________________________________
+
+(aparece todos)
+
+SELECT orders.id, orders.status, users.nome, orders.items
+FROM orders
+JOIN users ON orders.user_id = users.id
+;
+
+(aparece todos com os itens)
+
+SELECT orders.id, orders.status, users.nome,
+       ARRAY(SELECT items.nome FROM items WHERE items.id = ANY(orders.items)) as item_nomes
+FROM orders
+JOIN users ON orders.user_id = users.id;
+
+(NAO aparece todos com os itens)
+SELECT orders.id, orders.status, users.nome,
+       array_agg(items.nome) as item_nomes
+FROM orders
+JOIN users ON orders.user_id = users.id
+JOIN unnest(orders.items) AS item_id ON TRUE
+JOIN items ON items.id = item_id
+GROUP BY orders.id, orders.status, users.nome;

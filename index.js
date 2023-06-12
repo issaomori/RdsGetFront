@@ -1,48 +1,49 @@
 function get_order() {
-	axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
-		// axios.get('https://4dgxju5lue.execute-api.localhost.localstack.cloud:4566/api/pensionistas').then(resp => {
-		var response = {
-			"list_orders": [
-			  [
-				1,
-				"APROVADO",
-				"João",
-				[
-				  "misto",
-				  "x-salada"
-				]
-			  ],
-			  [
-				2,
-				"APROVADO",
-				"Lúcia",
-				[
-				  "misto",
-				  "hot-dog"
-				]
-			  ],
-			  [
-				3,
-				"APROVADO",
-				"Igor",
-				[
-				  "hot-dog",
-				  "x-salada"
-				]
-			  ],
-			  [
-				4,
-				"PROCESSANDO",
-				"Lucas",
-				[
-				  "x-salada",
-				  "misto"
-				]
-			  ]
-			]
-		  }
+	// axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
+	// axios.get('https://w0q1zo1lwf.execute-api.localhost.localstack.cloud:4566/api/order').then(resp => {
+	axios.get('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order').then(resp => {
+		// var response = {
+		// 	"list_orders": [
+		// 		[
+		// 			1,
+		// 			"APROVADO",
+		// 			"João",
+		// 			[
+		// 				"misto",
+		// 				"x-salada"
+		// 			]
+		// 		],
+		// 		[
+		// 			2,
+		// 			"APROVADO",
+		// 			"Lúcia",
+		// 			[
+		// 				"misto",
+		// 				"hot-dog"
+		// 			]
+		// 		],
+		// 		[
+		// 			3,
+		// 			"APROVADO",
+		// 			"Igor",
+		// 			[
+		// 				"hot-dog",
+		// 				"x-salada"
+		// 			]
+		// 		],
+		// 		[
+		// 			4,
+		// 			"PROCESSANDO",
+		// 			"Lucas",
+		// 			[
+		// 				"x-salada",
+		// 				"misto"
+		// 			]
+		// 		]
+		// 	]
+		// }
 
-		// var response = resp.data;
+		var response = resp.data;
 		var table = document.getElementById('table_user').getElementsByTagName('tbody')[0];
 
 		// LIMPAMOS O QUE TINHA ANTES e depois inserimos novos itens
@@ -58,14 +59,14 @@ function get_order() {
 			// cria duas novas células (id, nome)
 			//var cell1 = row.insertCell(0);
 			//var cell2 = row.insertCell(1);
-
-			for (var j = 0; j < response.list_orders[i].length; j++)
-			{
+			for (var j = 0; j < response.list_orders[i].length; j++) {
 				// cria uma nova células (id, nome, e etc...)
 				var cell1 = row.insertCell(j);
 				// altera o texto da célula (id, nome, e etc...)
 				cell1.innerHTML = response.list_orders[i][j];
 			}
+			var cell1 = row.insertCell(response.list_orders[i].length);
+			cell1.innerHTML = `<button type="button" class="btn btn-success" onclick=update_order(${response.list_orders[i][0]})>Approve Payment</button>`;
 
 			// segunda posição da linha i => nome
 			//cell2.innerHTML = response.list[i][0]
@@ -94,18 +95,28 @@ function post_order() {
 	console.log(order);
 
 	// axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
-	axios.post('https://utctstmed9.execute-api.localhost.localstack.cloud:4566/api/order', order).then(resp => {
+	// axios.post('https://w0q1zo1lwf.execute-api.localhost.localstack.cloud:4566/api/order', order).then(resp => {
+	axios.post('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order', order).then(resp => {
 		console.log("Cadastrado");
 		console.log(resp.data);
 
-		document.getElementById('order_name').value = "";
-		document.getElementById('order_items').value = "";
+		document.getElementById('order_name').value = ""; // LIMPAMOS OS CAMPOS
+		document.getElementById('order_items').value = ""; //LIMPAMOS OS CAMPOS
 
-		document.getElementById('post_message').value = "oi";
+		get_order();
 	});
 }
 
-// "column "array5" does not exist
-// LINE 1: ...T id FROM user_info), (SELECT id FROM insert_user)), ARRAY5;
-//                                                                 ^
-// "
+function update_order(id) {
+	// {
+	// 	"ID": "2"
+	//  }
+	var order = {
+		"ID": id
+	}
+	axios.patch('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order', order).then(resp => {
+		console.log("APROVADO");
+
+		get_order();
+	});
+}

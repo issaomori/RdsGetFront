@@ -9,13 +9,6 @@ app = Chalice(app_name='RdsGetFront')
 
 # AWS Lambda
 
-# SELECT orders.id, orders.status, users.nome,
-#        array_agg(items.nome) as item_nomes
-# FROM orders
-# JOIN users ON orders.user_id = users.id
-# JOIN unnest(orders.items) AS item_id ON TRUE
-# JOIN items ON items.id = item_id
-# GROUP BY orders.id, orders.status, users.nome;
 
 @app.lambda_function()
 def get_all(event, context):
@@ -28,7 +21,8 @@ def get_all(event, context):
     cursor.execute("SELECT orders.id, orders.status, users.nome, array_agg(items.nome) as item_nomes \
                     FROM orders JOIN users ON orders.user_id = users.id JOIN unnest(orders.items) AS item_id ON TRUE \
                     JOIN items ON items.id = item_id GROUP BY orders.id, orders.status, users.nome;")  # comando que faz a consulta no banco
-    return {"list orders": cursor.fetchall()}
+    return {"list_orders": cursor.fetchall()}
+
 
 @app.lambda_function()
 def get_order(event, context):
@@ -42,7 +36,7 @@ def get_order(event, context):
     cursor.execute(f"SELECT orders.id, orders.status, users.nome, \
        ARRAY(SELECT items.nome FROM items WHERE items.id = ANY(orders.items)) as item_nomes\
         FROM orders JOIN users ON orders.user_id = users.id WHERE orders.id = {id_user};")  # comando que faz a consulta no banco
-    return {"list orders": cursor.fetchone()}
+    return {"list_orders": cursor.fetchone()}
 
 
 @app.lambda_function()
@@ -124,7 +118,7 @@ def delete_order(event, context):
 # AWS Gateway
 
 
-@app.route("/order", methods=['PATCH'])
+@app.route("/order", methods=['PATCH'], cors=True)
 def update_an_order():
     client = boto3.client('lambda', endpoint_url=(
         "http://host.docker.internal:4566"))
@@ -197,6 +191,7 @@ def get_order_api(var):
         result = client.invoke(FunctionName='RdsGetFront-dev-get_order_name',
                                Payload=json_payload)
         return json.load(result['Payload'])
+
 
 @app.route("/order", methods=['POST'], cors=True)  # {"ID":"4","items":[1, 1]}
 def receive_an_order():
