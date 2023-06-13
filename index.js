@@ -1,7 +1,7 @@
 function get_order() {
 	// axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
 	// axios.get('https://w0q1zo1lwf.execute-api.localhost.localstack.cloud:4566/api/order').then(resp => {
-	axios.get('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order').then(resp => {
+	axios.get('http://localhost:4566/restapis/juemefbwc4/local/_user_request_/order').then(resp => {
 		// var response = {
 		// 	"list_orders": [
 		// 		[
@@ -66,7 +66,12 @@ function get_order() {
 				cell1.innerHTML = response.list_orders[i][j];
 			}
 			var cell1 = row.insertCell(response.list_orders[i].length);
-			cell1.innerHTML = `<button type="button" class="btn btn-success" onclick=update_order(${response.list_orders[i][0]})>Approve Payment</button>`;
+			if (response.list_orders[i][1] == "PROCESSANDO")
+				cell1.innerHTML = `<button type="button" class="btn btn-success" onclick=update_order(${response.list_orders[i][0]})>Approve Payment</button>`;
+			else
+				cell1.innerHTML = `<button type="button" class="btn disabled btn-success" >Approve Payment</button>`;
+			var cell2 = row.insertCell(response.list_orders[i].length + 1);
+			cell2.innerHTML = `<button type="button" class="btn btn-danger" onclick=delete_order(${response.list_orders[i][0]})>Delete</button>`;
 
 			// segunda posição da linha i => nome
 			//cell2.innerHTML = response.list[i][0]
@@ -96,7 +101,7 @@ function post_order() {
 
 	// axios.get('https://jsonplaceholder.typicode.com/todos/1').then(resp => {
 	// axios.post('https://w0q1zo1lwf.execute-api.localhost.localstack.cloud:4566/api/order', order).then(resp => {
-	axios.post('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order', order).then(resp => {
+	axios.post('http://localhost:4566/restapis/juemefbwc4/local/_user_request_/order', order).then(resp => {
 		console.log("Cadastrado");
 		console.log(resp.data);
 
@@ -114,9 +119,19 @@ function update_order(id) {
 	var order = {
 		"ID": id
 	}
-	axios.patch('http://localhost:4566/restapis/jjtfqmesbd/local/_user_request_/order', order).then(resp => {
+	axios.patch('http://localhost:4566/restapis/juemefbwc4/local/_user_request_/order', order).then(resp => {
 		console.log("APROVADO");
 
 		get_order();
 	});
 }
+
+function delete_order(id) {
+	axios.delete(`http://localhost:4566/restapis/juemefbwc4/local/_user_request_/order/${id}`).then(resp => {
+		console.log("DELETADO");
+
+		get_order();
+	});
+}
+
+window.onload = setInterval(get_order, 1000);

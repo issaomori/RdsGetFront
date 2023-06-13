@@ -210,12 +210,12 @@ def receive_an_order():
 # https://e0f0uaiay3.execute-api.localhost.localstack.cloud:4566/api/order
 
 
-@app.route("/order/{ID}", methods=['DELETE'])
-def delete_order_api(ID):
+@app.route("/order/{var}", methods=['DELETE'], cors=True)
+def delete_order_api(var):
     client = boto3.client('lambda', endpoint_url=(
         "http://host.docker.internal:4566"))
 
-    payload = {"ID": ID}  # convertemos e recebemos o id passado por parâmetro
+    payload = {"ID": var}  # convertemos e recebemos o id passado por parâmetro
     # transformamos um Json válido em uma string, já que Payload só
     json_payload = json.dumps(payload)
     # trabalha com strings
