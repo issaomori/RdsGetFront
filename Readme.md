@@ -70,9 +70,13 @@ Para listar as instâncias de banco de dados RDS\
 
 <br>
 
-Devemos criar o banco de dados\
+Devemos criar o banco de dados com LocalStack\
 `awslocal rds create-db-instance --master-username user --master-user-password pass --db-instance-identifier mydb --engine postgres --db-name database --db-instance-class db.t3.small`
 
+<br>
+
+Criando o banco de dados com o docker\
+`docker run -p 4510:5432 -e POSTGRES_PASSWORD=pass -e POSTGRES_USER=user -e POSTGRES_DB=database postgres`
 <br>
 
 Agora você pode se conectar ao banco de dados PostgreSQL usando um cliente de banco de dados ou uma biblioteca de programação. Use o host localhost, a porta 4510, o nome de usuário postgres e a senha para se conectar ao banco de dados.

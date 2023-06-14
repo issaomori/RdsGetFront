@@ -3,7 +3,6 @@ import psycopg2
 import boto3
 import json
 
-
 app = Chalice(app_name='RdsGetFront')
 
 
